@@ -16,7 +16,7 @@ const mouse = {
 window.addEventListener('mousemove', function(event) {
     mouse.x = event.x;
     mouse.y = event.y;
-    // console.log(mouse.x, mouse.y);
+    mouse.radius = 150;
 });
 
 ctx.fillStyle = 'white';
@@ -44,8 +44,15 @@ class Particle {
         let dx = mouse.x - this.x;
         let dy = mouse.y - this.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 500) {
-            this.size = 50;
+        let forceDirectionX = dx / distance;
+        let forceDirectionY = dy / distance;
+        let maxDistance = mouse.radius;
+        let force = (maxDistance - distance) / maxDistance;
+        let directionX = forceDirectionX * force * this.density;
+        let directionY = forceDirectionY * force * this.density;
+        if (distance < mouse.radius) {
+            this.x += directionX;
+            this.y += directionY;
         } else {
             this.size = 3;
         }
@@ -54,7 +61,7 @@ class Particle {
 
 function init() {
     particleArray = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 1000; i++) {
         let x = Math.random() * canvas.width;
         let y = Math.random() * canvas.height;
         particleArray.push(new Particle(x, y));
